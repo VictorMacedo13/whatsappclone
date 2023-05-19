@@ -1,5 +1,6 @@
 import React, {useRef} from 'react'
 import io from 'socket.io-client'
+import style from './Join.module.css'
 
 export default function Join({setSocket, setChatVisibility, setUsername}) {
 
@@ -15,12 +16,18 @@ export default function Join({setSocket, setChatVisibility, setUsername}) {
         return setChatVisibility(true) 
     }
   }
-
+  const getKey = (e) =>{
+    if(e.key === 'Enter'){
+      handleSubmit()
+    }
+  }
   return (
-    <div>
-        <h1>Join</h1>
-        <input type="text" ref={usernameRef} placeholder='Nome de usuário'/>
-        <button onClick={()=>handleSubmit()}>Entrar</button>
+    <div className={style['conteiner']}>
+        <h1>Entrar</h1>
+        <div className={style['form']}>
+          <input className={style['input']} onKeyDown={(e)=>getKey(e)} type="text" ref={usernameRef} placeholder='Nome de usuário'/>
+          <button className={style['button']} onClick={()=>handleSubmit()}>Entrar</button>
+        </div>
     </div>
   )
 }

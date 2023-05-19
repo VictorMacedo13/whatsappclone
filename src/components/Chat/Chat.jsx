@@ -1,18 +1,34 @@
-import { useEffect, useRef, useState } from "react"
-import style from './Chat.module.css'
+import { useEffect, useRef, useState } from "react";
+import style from './Chat.module.css';
+import {ReactComponent as Btn} from '../../assets/btn.svg';
 
 export default function Chat({socket, username}) {
 
     const messageRef = useRef()
+    const scrollRef = useRef(null)
     const [messageList, setMessageList] = useState([])
 
     useEffect(() => {
      socket.on('receive_message', data => {
         setMessageList((current)=>[...current, data])
-     })
-     return () => socket.off('receive_message')
-    }, [socket])
-    
+        
+    })
+    return () => socket.off('receive_message')
+}, [socket])
+
+useEffect(() => {
+    focusInput()
+}, [])
+
+useEffect(() => {
+    // if (messageList.length >0) {
+        
+    //     if (messageList[messageList.length-1].author === username) {
+    //         scrollDown() 
+    //     }
+    // }
+    scrollDown() 
+}, [messageList])
 
     const handleSubmit = async() =>{
         const message = messageRef.current.value
@@ -21,9 +37,13 @@ export default function Chat({socket, username}) {
             socket.emit('message', message)
             clearInput()
             focusInput()
+            
         }
     }
 
+    const scrollDown = () => {
+        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
     const clearInput = () =>{
         messageRef.current.value = ''
     }
@@ -62,11 +82,13 @@ export default function Chat({socket, username}) {
                         
                         ))
                         }
+                <div ref={scrollRef}/>
             </div>
         </div>
         <div className={style['input-card']}>
-            <input onKeyDown={(e)=>getEnterKey(e)} type="text" ref={messageRef} placeholder='Mensagem'/>
-            <button onClick={()=>handleSubmit()}>Enviar</button>
+            <input className={style['input']} onKeyDown={(e)=>getEnterKey(e)} type="text" ref={messageRef} placeholder='Mensagem'/>
+            <Btn className={style['btn']} onClick={()=>handleSubmit()} />
+            {/* <button className={style['button']} onClick={()=>handleSubmit()}>Enviar</button> */}
         </div>
       </div>
     )
